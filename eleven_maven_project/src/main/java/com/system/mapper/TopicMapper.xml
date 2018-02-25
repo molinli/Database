@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- TopicMapper -->
+<mapper namespace="com.system.mapper.TopicMapper">
+
+    <!-- 数据库表属性映射到po类实体类 -->
+    <resultMap id="BaseResultMap" type="com.system.po.Topic">
+        <id column="topic_id" property="topicId" jdbcType="INTEGER"/>
+        <result column="tea_id" property="teaId" jdbcType="INTEGER"/>
+        <result column="stu_id" property="stuId" jdbcType="INTEGER"/>
+        <result column="topic_type" property="topicType" jdbcType="VARCHAR"/>
+        <result column="topic_title" property="topicTitle" jdbcType="VARCHAR"/>
+        <result column="topic_major" property="topicMajor" jdbcType="VARCHAR"/>
+        <result column="topic_content" property="topicContent" jdbcType="VARCHAR"/>
+        <result column="topic_request" property="topicRequest" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List">
+        topic_id,tea_id,stu_id,topic_type,topic_title,topic_major,topic_content,topic_request
+    </sql>
+
+    <!-- 实现mapper对应方法 -->
+    <select id="countByExample" parameterType="com.system.po.TopicExample" resultType="java.lang.Integer">
+        select count(*) from topic
+        <!--<if test="_parameter != null" >-->
+            <!--<include refid="Example_Where_Clause" />-->
+        <!--</if>-->
+        ORDER BY topic_id;
+    </select>
+
+    <!-- 实现mapper对应方法 没有问题 -->
+    <select id="countByStuNotNull" parameterType="com.system.po.TopicExample" resultType="java.lang.Integer">
+        select count(*) from topic
+        WHERE stu_id is not null
+        ORDER BY topic_id;
+    </select>
+
+    <select id="selectByExample" parameterType="com.system.po.TopicExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from topic
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE topic_id=#{topicId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByStuNotNull" parameterType="com.system.po.TopicExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from topic
+        WHERE stu_id is not null
+        <!--<if test="_parameter != null">-->
+            <!--<include refid="Example_Where_Clause"/>-->
+        <!--</if>-->
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByName" parameterType="String" resultMap="BaseResultMap">
+        SELECT topic.*
+        FROM topic
+        WHERE topic_title LIKE CONCAT(CONCAT('%', #{name}), '%')
+    </select>
+
+    <select id="selectByTeaId" resultMap="BaseResultMap">
+      SELECT
+        <include refid="Base_Column_List"/>
+      FROM topic
+      WHERE tea_id=#{0}
+      limit #{1}, #{2}
+    </select>
+
+    <select id="selectByTeaIdAndName" resultMap="BaseResultMap">
+        SELECT
+         <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE tea_id=#{0}
+        AND topic_title LIKE CONCAT(CONCAT('%', #{1}), '%')
+        limit #{2}, #{3}
+    </select>
+
+    <select id="countByTeaId" parameterType="INTEGER" resultType="INTEGER">
+         select count(*) from topic
+        WHERE tea_id=#{0}
+    </select>
+
+    <select id="countByTeaIdAndName" resultType="INTEGER">
+        SELECT COUNT(*)
+        FROM topic
+        WHERE tea_id=#{0}
+        AND topic_title LIKE CONCAT(CONCAT('%', #{1}), '%')
+    </select>
+
+    <select id="selectByTopicId" parameterType="INTEGER" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE topic_id=#{0}
+    </select>
+
+    <update id="updateTopic" parameterType="com.system.po.Topic" >
+        UPDATE topic
+        <set>
+            stu_id = #{stuId,jdbcType=INTEGER},
+        </set>
+        WHERE topic_id = #{topicId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateTopicInfo" parameterType="com.system.po.Topic">
+        UPDATE topic
+        <set>
+            tea_id = #{teaId,jdbcType=INTEGER},
+            topic_type = #{topicType,jdbcType=VARCHAR },
+            topic_title = #{topicTitle,jdbcType=VARCHAR},
+            topic_major = #{topicMajor,jdbcType=VARCHAR},
+            topic_content = #{topicContent,jdbcType=VARCHAR},
+            topic_request = #{topicRequest,jdbcType=VARCHAR},
+        </set>
+        WHERE topic_id = #{topicId,jdbcType=INTEGER}
+    </update>
+
+    <insert id="insert" >
+        INSERT INTO topic (topic_id,tea_id,
+        topic_type,topic_title,topic_major,topic_content,topic_request)
+        VALUES (#{0},
+        #{1},
+        #{2},
+        #{3},
+        #{4},
+        #{5},
+        #{6})
+    </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from topic
+    where topic_id = #{0}
+  </delete>
+
+    <select id="selectByStuNull" resultType="java.lang.Integer">
+        SELECT stu_id
+        FROM topic
+        WHERE stu_id is not null
+    </select>
+
+    <select id="findByStuNull" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE stu_id is NULL
+    </select>
+
+</mapper>

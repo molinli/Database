@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.system.mapper.StudentMapperCustom">
+
+    <!--一对多查询 查询课程-->
+    <resultMap id="StudentAndSelectCourseResultMap" type="StudentCustom">
+        <!--配置映射的订单信息
+            property 的值应跟 该vo 的变量名相同
+            column 的值，应与对应的数据库 表字段名相同
+        -->
+        <id column="userID" property="userid"/>
+        <result column="userName" property="username" />
+        <result column="sex" property="sex" />
+        <result column="birthYear" property="birthyear" />
+        <result column="grade" property="grade" />
+        <result column="collegeID" property="collegeid" />
+
+        <!--collection 对关联查询到的多条记录映射到集合对象中
+            property： 将关联查询到的多条信息映射到 vo 哪个属性
+            ofType：映射到集合属性中 pojo 的类型
+         选课信息  -->
+        <collection property="selectedCourseList" ofType="SelectedCourseCustom">
+            <result column="courseID" property="courseid"/>
+            <result column="studentID" property="studentid"/>
+            <result column="mark" property="mark"/>
+            <!--配置映射的关系的课程信息-->
+            <association property="courseCustom" javaType="CourseCustom">
+                <id column="courseID" property="courseid"/>
+                <result column="courseName" property="coursename"/>
+                <result column="teacherID" property="teacherid"/>
+                <result column="courseTime" property="coursetime"/>
+                <result column="classRoom" property="classroom"/>
+                <result column="courseWeek" property="courseweek"/>
+                <result column="courseType" property="coursetype"/>
+                <result column="collegeID" property="collegeid"/>
+                <result column="score" property="score"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <!--一对多查询 查询课题-->
+    <resultMap id="StudentAndSelectTopicResultMap" type="StudentCustom">
+        <!--配置映射的订单信息
+            property 的值应跟 该vo 的变量名相同
+            column 的值，应与对应的数据库 表字段名相同
+            学生信息
+        -->
+        <id column="userID" property="userid"/>
+        <result column="userName" property="username" />
+        <result column="sex" property="sex" />
+        <result column="birthYear" property="birthyear" />
+        <result column="grade" property="grade" />
+        <result column="collegeID" property="collegeid" />
+
+        <!--collection 对关联查询到的多条记录映射到集合对象中
+            property： 将关联查询到的多条信息映射到 vo 哪个属性
+            ofType：映射到集合属性中 pojo 的类型
+            firchoose对应
+        -->
+        <collection property="selectedTopicList" ofType="SelectedTopicCustom">
+            <result column="topic_id" property="topicid"/>
+            <result column="stu_id" property="studentid"/>
+            <result column="fc_time" property="fctime"/>
+            <result column="mark" property="mark"/>
+            <!--配置映射的关系的课题信息 topIc信息 -->
+            <association property="topicCustom" javaType="TopicCustom">
+                <id column="topic_id" property="topicId"/>
+                <result column="tea_id" property="teaId"/>
+                <result column="stu_id" property="stuId"/>
+                <result column="topic_type" property="topicType"/>
+                <result column="topic_title" property="topicTitle"/>
+                <result column="topic_major" property="topicMajor"/>
+                <result column="topic_content" property="topicContent"/>
+                <result column="topic_request" property="topicRequest"/>
+            </association>
+        </collection>
+    </resultMap>
+
+    <select id="findByPaging" parameterType="PagingVO" resultType="StudentCustom">
+        select student.*, college.collegeName
+        from student, college
+        WHERE student.collegeID = college.collegeID
+        limit #{toPageNo}, #{pageSize}
+    </select>
+
+    <select id="findStudentAndSelectCourseListById" parameterType="int" resultMap="StudentAndSelectCourseResultMap">
+        SELECT
+          student.*,
+          selectedcourse.*,
+          course.*
+        FROM
+          student,
+          selectedcourse,
+          course
+        WHERE
+          student.userID = #{id}
+        AND
+          student.userID = selectedcourse.studentID
+        AND
+          selectedcourse.courseID = course.courseID
+    </select>
+
+    <select id="findStudentAndSelectTopicListById" parameterType="int" resultMap="StudentAndSelectTopicResultMap">
+        SELECT
+        student.*,
+        firchoose.*,
+        topic.*
+        FROM
+        student,
+        firchoose,
+        topic
+        WHERE
+        student.userID = #{id}
+        AND
+        student.userID = firchoose.stu_id
+        AND
+        firchoose.topic_id = topic.topic_id
+    </select>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.system.mapper.TopicMapperCustom">
+
+    <!-- 数据库表属性映射到po类实体类 -->
+    <resultMap id="BaseResultMap" type="com.system.po.Topic">
+        <id column="topic_id" property="topicId" jdbcType="INTEGER"/>
+        <result column="tea_id" property="teaId" jdbcType="INTEGER"/>
+        <result column="stu_id" property="stuId" jdbcType="INTEGER"/>
+        <result column="topic_type" property="topicType" jdbcType="VARCHAR"/>
+        <result column="topic_title" property="topicTitle" jdbcType="VARCHAR"/>
+        <result column="topic_major" property="topicMajor" jdbcType="VARCHAR"/>
+        <result column="topic_content" property="topicContent" jdbcType="VARCHAR"/>
+        <result column="topic_request" property="topicRequest" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        topic_id,tea_id,stu_id,topic_type,topic_title,topic_major,topic_content,topic_request
+    </sql>
+
+    <select id="findByPaging" parameterType="PagingVO" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM topic
+    limit #{toPageNo}, #{pageSize}
+</select>
+
+    <select id="findByPagingStuNoNull" parameterType="PagingVO" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE stu_id is not null
+        limit #{toPageNo}, #{pageSize}
+    </select>
+
+    <select id="findByStuID" parameterType="INTEGER" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM topic
+        WHERE stu_id=#{0}
+    </select>
+
+</mapper>
