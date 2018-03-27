@@ -19,13 +19,16 @@ ORM框架：Mybatis
 前端框架：Bootstrap
 # SpringMVC 托管
 <img src="https://github.com/molinli/Database/blob/master/picture/springManager.png" width="400">
-# 项目运行硬件&软件
+
+## 项目运行硬件&软件
+
 ### 1、运行环境和所需工具
 * 编译器：IntelliJ IDEA
 * 项目构建工具：Maven
 * 数据库：Mysql
 * JDK版本：jdk1.8
 * Tomcat版本：Tomcat8.05
+
 ### 2、
 ![image](https://github.com/molinli/Database/blob/master/picture/begin.png)
 * 登录账户
